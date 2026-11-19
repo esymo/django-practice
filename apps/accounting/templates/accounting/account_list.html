@@ -1,0 +1,198 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="page-title mb-1">
+                حساب‌ها
+            </h2>
+
+            <p class="text-muted mb-0">
+                درخت حساب‌های مالی
+            </p>
+        </div>
+
+        <a href="{% url 'journal_entry_list' %}" class="btn btn-outline-secondary">
+            اسناد حسابداری
+        </a>
+
+    </div>
+
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            {% if accounts %}
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>
+                                کد
+                            </th>
+
+                            <th>
+                                نام حساب
+                            </th>
+
+                            <th>
+                                نوع
+                            </th>
+
+                            <th>
+                                سطح
+                            </th>
+
+                            <th>
+                                حساب والد
+                            </th>
+
+                            <th class="text-center">
+                                عملیات
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for account in accounts %}
+
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    {{ account.code }}
+                                </strong>
+                            </td>
+
+
+                            <td>
+
+                                {% if account.level == 1 %}
+
+                                <strong>
+                                    {{ account.name }}
+                                </strong>
+
+                                {% elif account.level == 2 %}
+
+                                <span class="ms-3">
+                                    └─ {{ account.name }}
+                                </span>
+
+                                {% else %}
+
+                                <span class="ms-5">
+                                    └─ {{ account.name }}
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+                                {{ account.get_account_type_display }}
+                            </td>
+
+
+                            <td>
+
+                                {% if account.level == 1 %}
+
+                                گروه
+
+                                {% elif account.level == 2 %}
+
+                                کل
+
+                                {% else %}
+
+                                معین
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                {% if account.parent %}
+
+                                {{ account.parent.code }}
+                                -
+                                {{ account.parent.name }}
+
+                                {% else %}
+
+                                -
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td class="text-center">
+
+                                {% if account.level == 3 %}
+
+                                <a href="{% url 'account_ledger' account.id %}" class="btn btn-sm btn-outline-primary">
+                                    گردش حساب
+                                </a>
+
+                                {% else %}
+
+                                <span class="text-muted">
+                                    -
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <div class="text-center py-5">
+
+                <h5>
+                    حسابی وجود ندارد.
+                </h5>
+
+                <p class="text-muted">
+                    هنوز سرفصل حسابداری ایجاد نشده است.
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,716 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="page-title">
+                ثبت سند حسابداری
+            </h2>
+
+            <p class="text-muted mb-0">
+                ثبت سند دوطرفه
+            </p>
+        </div>
+
+        <a href="/" class="btn btn-outline-secondary">
+            بازگشت
+        </a>
+
+    </div>
+
+
+    <!-- Messages -->
+    {% if messages %}
+
+    {% for message in messages %}
+
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+
+    {% endfor %}
+
+    {% endif %}
+
+
+    <!-- General Form Errors -->
+    {% if entry_form.non_field_errors %}
+
+    <div class="alert alert-danger">
+
+        {% for error in entry_form.non_field_errors %}
+        <div>{{ error }}</div>
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
+
+
+    <form method="post">
+
+        {% csrf_token %}
+
+
+        <!-- ========================= -->
+        <!-- Journal Entry Header -->
+        <!-- ========================= -->
+
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-header">
+                <strong>اطلاعات سند</strong>
+            </div>
+
+            <div class="card-body">
+
+                <div class="row g-3">
+
+                    <!-- Date -->
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+                            تاریخ
+                        </label>
+
+                        {{ entry_form.date }}
+
+                        {% for error in entry_form.date.errors %}
+
+                        <div class="text-danger small mt-1">
+                            {{ error }}
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <!-- Description -->
+                    <div class="col-md-5">
+
+                        <label class="form-label">
+                            شرح سند
+                        </label>
+
+                        {{ entry_form.description }}
+
+                        {% for error in entry_form.description.errors %}
+
+                        <div class="text-danger small mt-1">
+                            {{ error }}
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <!-- Reference -->
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            شماره / مرجع
+                        </label>
+
+                        {{ entry_form.reference }}
+
+                        {% for error in entry_form.reference.errors %}
+
+                        <div class="text-danger small mt-1">
+                            {{ error }}
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ========================= -->
+        <!-- Journal Lines -->
+        <!-- ========================= -->
+
+        <div class="card shadow-sm">
+
+            <div class="card-header d-flex justify-content-between align-items-center">
+
+                <strong>
+                    ردیف‌های سند
+                </strong>
+
+                <span class="text-muted small">
+                    حداقل دو ردیف
+                </span>
+
+            </div>
+
+
+            <div class="card-body">
+
+
+                {{ line_formset.management_form }}
+
+
+                <div class="table-responsive">
+
+                    <table class="table table-bordered align-middle">
+
+                        <!-- Table Header -->
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th style="width: 5%;" class="text-center">
+                                    ردیف
+                                </th>
+
+                                <th style="width: 30%;">
+                                    حساب
+                                </th>
+
+                                <th style="width: 20%;">
+                                    بدهکار
+                                </th>
+
+                                <th style="width: 20%;">
+                                    بستانکار
+                                </th>
+
+                                <th style="width: 20%;">
+                                    شرح
+                                </th>
+
+                                <th style="width: 5%;" class="text-center">
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <!-- Table Body -->
+
+                        <tbody id="journal-lines">
+
+                            {% for form in line_formset %}
+
+                            <tr class="journal-line">
+
+                                <td class="text-center row-number">
+                                    {{ forloop.counter }}
+                                </td>
+
+                                <td>
+                                    {{ form.account }}
+
+                                    {% for error in form.account.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+                                    {% endfor %}
+                                </td>
+
+                                <td>
+                                    {{ form.debit }}
+
+                                    {% for error in form.debit.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+                                    {% endfor %}
+                                </td>
+
+                                <td>
+                                    {{ form.credit }}
+
+                                    {% for error in form.credit.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+                                    {% endfor %}
+                                </td>
+
+                                <td>
+                                    {{ form.description }}
+
+                                    {% for error in form.description.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+                                    {% endfor %}
+                                </td>
+
+                                <td class="text-center">
+
+                                    <button type="button" class="btn btn-sm btn-outline-danger remove-row"
+                                        title="حذف ردیف">
+                                        ×
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+                            {% if form.non_field_errors %}
+
+                            <tr>
+                                <td colspan="6">
+
+                                    <div class="alert alert-danger mb-0">
+
+                                        {% for error in form.non_field_errors %}
+                                        <div>{{ error }}</div>
+                                        {% endfor %}
+
+                                    </div>
+
+                                </td>
+                            </tr>
+
+                            {% endif %}
+
+                            {% endfor %}
+
+                        </tbody>
+
+
+                        <!-- Table Footer -->
+
+                        <tfoot>
+
+                            <tr class="table-light">
+
+                                <th colspan="2" class="text-end">
+                                    جمع
+                                </th>
+
+
+                                <th>
+
+                                    <span id="total-debit">
+                                        0
+                                    </span>
+
+                                </th>
+
+
+                                <th>
+
+                                    <span id="total-credit">
+                                        0
+                                    </span>
+
+                                </th>
+
+
+                                <th>
+
+                                    <span id="balance-status" class="badge text-bg-secondary">
+                                        بررسی نشده
+                                    </span>
+
+                                </th>
+
+
+                                <th></th>
+
+                            </tr>
+
+                        </tfoot>
+
+                    </table>
+
+                </div>
+
+
+
+                <!-- ========================= -->
+                <!-- Row Controls -->
+                <!-- ========================= -->
+
+                <div class="d-flex justify-content-between align-items-center mt-3">
+
+                    <div>
+
+                        <button type="button" id="add-row" class="btn btn-outline-primary">
+                            + افزودن ردیف
+                        </button>
+
+                    </div>
+
+
+                    <div class="text-muted">
+
+                        تعداد ردیف‌ها:
+
+                        <strong id="row-count">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ========================= -->
+                <!-- Submit -->
+                <!-- ========================= -->
+
+                <div class="d-flex justify-content-end mt-4">
+
+                    <button type="submit" class="btn btn-primary px-4">
+                        ثبت سند
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+
+<!-- ========================= -->
+<!-- JavaScript -->
+<!-- ========================= -->
+<!-- Empty form template for JavaScript -->
+
+<template id="empty-form-template">
+
+    <tr class="journal-line">
+
+        <td class="text-center row-number">
+            0
+        </td>
+
+        <td>
+            {{ line_formset.empty_form.account }}
+        </td>
+
+        <td>
+            {{ line_formset.empty_form.debit }}
+        </td>
+
+        <td>
+            {{ line_formset.empty_form.credit }}
+        </td>
+
+        <td>
+            {{ line_formset.empty_form.description }}
+        </td>
+
+        <td class="text-center">
+
+            <button type="button" class="btn btn-sm btn-outline-danger remove-row" title="حذف ردیف">
+                ×
+            </button>
+
+        </td>
+
+    </tr>
+
+</template>
+<script>
+
+    function calculateTotals() {
+
+        let debitTotal = 0;
+        let creditTotal = 0;
+
+        document.querySelectorAll(".debit-input").forEach(function (input) {
+            debitTotal += parseFloat(input.value) || 0;
+        });
+
+        document.querySelectorAll(".credit-input").forEach(function (input) {
+            creditTotal += parseFloat(input.value) || 0;
+        });
+
+        document.getElementById("total-debit").textContent =
+            debitTotal.toLocaleString("en-US");
+
+        document.getElementById("total-credit").textContent =
+            creditTotal.toLocaleString("en-US");
+
+        const status = document.getElementById("balance-status");
+
+        if (debitTotal === 0 && creditTotal === 0) {
+
+            status.textContent = "بررسی نشده";
+            status.className = "badge text-bg-secondary";
+
+        } else if (debitTotal === creditTotal) {
+
+            status.textContent = "سند متوازن است";
+            status.className = "badge text-bg-success";
+
+        } else {
+
+            status.textContent = "سند نامتوازن است";
+            status.className = "badge text-bg-danger";
+        }
+    }
+
+
+    /*
+     * شماره‌گذاری ردیف‌ها
+     */
+    function updateRowNumbers() {
+
+        const rows = document.querySelectorAll(".journal-line");
+
+        rows.forEach(function (row, index) {
+
+            const numberCell = row.querySelector(".row-number");
+
+            if (numberCell) {
+                numberCell.textContent = index + 1;
+            }
+
+        });
+
+        document.getElementById("row-count").textContent =
+            rows.length;
+    }
+
+
+    /*
+     * مرتب‌سازی مجدد شماره فرم‌های Django
+     *
+     * مثلاً:
+     * form-0
+     * form-1
+     * form-2
+     *
+     * بعد از حذف ردیف دوم:
+     *
+     * form-0
+     * form-1
+     *
+     */
+    function reindexForms() {
+
+        const rows =
+            document.querySelectorAll(".journal-line");
+
+        rows.forEach(function (row, index) {
+
+            row.querySelectorAll("input, select").forEach(
+                function (element) {
+
+                    /*
+                     * تغییر name
+                     */
+                    if (element.name) {
+
+                        element.name =
+                            element.name.replace(
+                                /form-\d+-/,
+                                "form-" + index + "-"
+                            );
+
+                    }
+
+
+                    /*
+                     * تغییر id
+                     */
+                    if (element.id) {
+
+                        element.id =
+                            element.id.replace(
+                                /form-\d+-/,
+                                "form-" + index + "-"
+                            );
+
+                    }
+
+                }
+            );
+
+        });
+
+
+        /*
+         * تعداد فرم‌های موجود
+         */
+        document.getElementById(
+            "id_form-TOTAL_FORMS"
+        ).value = rows.length;
+    }
+
+
+    /*
+     * افزودن ردیف جدید
+     */
+    function addRow() {
+
+        const template =
+            document.getElementById(
+                "empty-form-template"
+            );
+
+        const container =
+            document.getElementById(
+                "journal-lines"
+            );
+
+        const totalForms =
+            document.getElementById(
+                "id_form-TOTAL_FORMS"
+            );
+
+
+        /*
+         * شماره فرم جدید
+         */
+        const formIndex =
+            parseInt(totalForms.value);
+
+
+        /*
+         * گرفتن HTML فرم خالی
+         */
+        let html =
+            template.innerHTML.replace(
+                /__prefix__/g,
+                formIndex
+            );
+
+
+        /*
+         * اضافه کردن ردیف
+         */
+        container.insertAdjacentHTML(
+            "beforeend",
+            html
+        );
+
+
+        /*
+         * افزایش تعداد فرم‌ها
+         */
+        totalForms.value =
+            formIndex + 1;
+
+
+        updateRowNumbers();
+        calculateTotals();
+    }
+
+
+    /*
+     * دکمه افزودن ردیف
+     */
+    document.getElementById("add-row")
+        .addEventListener(
+            "click",
+            addRow
+        );
+
+
+    /*
+     * محاسبه مبلغ‌ها هنگام تایپ
+     */
+    document.addEventListener(
+        "input",
+        function (event) {
+
+            if (
+                event.target.classList.contains("debit-input") ||
+                event.target.classList.contains("credit-input")
+            ) {
+
+                calculateTotals();
+
+            }
+
+        }
+    );
+
+
+    /*
+     * حذف ردیف
+     */
+    document.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target.classList.contains("remove-row")
+            ) {
+
+                const rows =
+                    document.querySelectorAll(".journal-line");
+
+
+                /*
+                 * حداقل دو ردیف باید باقی بماند
+                 */
+                if (rows.length <= 2) {
+
+                    alert(
+                        "سند باید حداقل دو ردیف داشته باشد."
+                    );
+
+                    return;
+                }
+
+
+                /*
+                 * حذف ردیف انتخاب‌شده
+                 */
+                event.target
+                    .closest(".journal-line")
+                    .remove();
+
+
+                /*
+                 * مرتب کردن مجدد فرم‌های Django
+                 */
+                reindexForms();
+
+
+                /*
+                 * به‌روزرسانی شماره ردیف‌ها
+                 */
+                updateRowNumbers();
+
+
+                /*
+                 * محاسبه مجدد مبالغ
+                 */
+                calculateTotals();
+
+            }
+
+        }
+    );
+
+
+    /*
+     * اجرای اولیه
+     */
+    updateRowNumbers();
+    calculateTotals();
+
+</script>
+
+{% endblock %}
